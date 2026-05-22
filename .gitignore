@@ -2,4 +2,3 @@ node_modules/
 .env
 *.bak
 .DS_Store
-db-config.js
