@@ -1,0 +1,62 @@
+name: Regenerate Dashboard
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+env:
+  SUPABASE: '1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install pg
+
+      - name: Regenerate dashboard
+        run: node parsers/regenerate-dashboard.js
+        env:
+          PGHOST: ${{ secrets.SUPABASE_HOST }}
+          PGPORT: '5432'
+          PGDATABASE: 'postgres'
+          PGUSER: 'postgres'
+          PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+          PGSSLMODE: 'require'
+
+      - name: Regenerate prognosis
+        run: node parsers/generate-prognosis.js
+        env:
+          PGHOST: ${{ secrets.SUPABASE_HOST }}
+          PGPORT: '5432'
+          PGDATABASE: 'postgres'
+          PGUSER: 'postgres'
+          PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+          PGSSLMODE: 'require'
+
+      - name: Regenerate news
+        run: node parsers/generate-news-page.js
+        env:
+          PGHOST: ${{ secrets.SUPABASE_HOST }}
+          PGPORT: '5432'
+          PGDATABASE: 'postgres'
+          PGUSER: 'postgres'
+          PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+          PGSSLMODE: 'require'
+
+      - name: Commit updated pages
+        run: |
+          git config user.name "gadgetzona-cyber"
+          git config user.email "gadgetzona@gmail.com"
+          git add -A
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-regenerate dashboard [skip ci]"
+          git push
