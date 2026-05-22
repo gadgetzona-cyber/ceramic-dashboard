@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Парсинг — Аналитика плитки</title>
+<style>
+:root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e; --blue: #58a6ff; --green: #3fb950; --red: #f85149; --orange: #d29922; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: var(--bg); color: var(--text); padding: 1rem; font-size: 14px; }
+.container { max-width: 1100px; margin: auto; }
+h1 { font-size: 1.3rem; margin-bottom: .25rem; }
+h1 small { color: var(--muted); font-weight: normal; font-size: .85rem; }
+h2 { font-size: 1.1rem; margin: 1.5rem 0 .75rem; color: var(--blue); }
+.sub { color: var(--muted); margin-bottom: 1rem; font-size: .85rem; }
+
+/* ---- Cards ---- */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .75rem; margin: 1rem 0; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .75rem; }
+.card .val { font-size: 1.5rem; font-weight: 700; margin-bottom: .15rem; }
+.card .lbl { font-size: .75rem; color: var(--muted); }
+.card.green .val { color: var(--green); }
+.card.blue .val { color: var(--blue); }
+.card.orange .val { color: var(--orange); }
+.card.purple .val { color: #d2a8ff; }
+
+/* ---- Status grid ---- */
+.status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: .75rem; margin: 1rem 0; }
+.status-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .75rem; }
+.status-item h3 { font-size: .95rem; margin-bottom: .4rem; }
+.status-item p { font-size: .8rem; color: var(--muted); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .75rem; font-weight: 600; }
+.badge.ok { background: rgba(63,185,80,.15); color: var(--green); }
+.badge.warn { background: rgba(210,153,34,.15); color: var(--orange); }
+.badge.none { background: rgba(139,148,158,.1); color: var(--muted); }
+
+/* ---- Tables ---- */
+table { width: 100%; border-collapse: collapse; margin: .5rem 0; font-size: .8rem; }
+th { text-align: left; padding: .5rem .4rem; border-bottom: 1px solid var(--border); color: var(--muted); font-weight: 600; white-space: nowrap; }
+td { padding: .4rem; border-bottom: 1px solid var(--border); }
+td.name { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr:hover td { background: rgba(88,166,255,.04); }
+
+/* ---- Checklist ---- */
+.checklist { margin: 1rem 0; }
+.check-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .75rem; margin-bottom: .5rem; display: flex; justify-content: space-between; align-items: center; }
+.check-item .label { font-size: .85rem; }
+.check-item .meta { font-size: .75rem; color: var(--muted); }
+
+/* ---- Footer ---- */
+.footer { text-align: center; padding: 1.5rem; color: var(--muted); font-size: .75rem; }
+
+/* Responsive */
+@media(max-width:600px) {
+  .status-grid { grid-template-columns: 1fr; }
+  td.name { max-width: 160px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🕷️ Состояние парсинга <small>14.05.2026, 09:33:26</small></h1>
+<p class="sub">Сбор данных с маркетплейсов для аналитики рынка керамической плитки</p>
+
+<!-- KPI -->
+<div class="cards">
+  <div class="card green"><div class="val">95</div><div class="lbl">Товаров с плиткой</div></div>
+  <div class="card blue"><div class="val">93</div><div class="lbl">Брендов плитки</div></div>
+  <div class="card orange"><div class="val">2,055 ₽</div><div class="lbl">Средняя цена</div></div>
+  <div class="card purple"><div class="val">165 – 4,648</div><div class="lbl">Диапазон цен, ₽</div></div>
+</div>
+
+<!-- Status of components -->
+<h2>📡 Адаптеры</h2>
+<div class="status-grid">
+  <div class="status-item">
+    <h3>Wildberries <span class="badge ok">✅ 156 товаров</span></h3>
+    <p>DOM extraction + xvfb + headed Chrome. Собирает с категорий и поиска.</p>
+  </div>
+  <div class="status-item">
+    <h3>Ozon <span class="badge none">⏳ Адаптер готов</span></h3>
+    <p>Адаптер написан, использует BaseExtractor. Нужен первый прогон.</p>
+  </div>
+  <div class="status-item">
+    <h3>Yandex Market <span class="badge none">❌ Не реализован</span></h3>
+    <p>Только структура в config/sites.js.</p>
+  </div>
+</div>
+
+<!-- Component checklist -->
+<h2>🎯 Компоненты</h2>
+<div class="checklist">
+  <div class="check-item">
+    <span class="label">✅ BaseExtractor — база для всех адаптеров</span>
+    <span class="meta">Готов</span>
+  </div>
+  <div class="check-item">
+    <span class="label">✅ Attribute extractor — размер, цвет, бренд, коллекция, морозостойкость...</span>
+    <span class="meta">Готов</span>
+  </div>
+  <div class="check-item">
+    <span class="label">✅ Self-learning полей — новые поля авто-добавляются</span>
+    <span class="meta">Готов</span>
+  </div>
+  <div class="check-item">
+    <span class="label">✅ Anti-bot обход — xvfb + headed Chrome + persistent profile</span>
+    <span class="meta">Готов</span>
+  </div>
+  <div class="check-item">
+    <span class="label">✅ Экспорт — JSON, CSV, XLSX</span>
+    <span class="meta">Готов</span>
+  </div>
+  <div class="check-item">
+    <span class="label">⏳ Фильтр товаров — убирать не-плитку (футболки, галоши)</span>
+    <span class="meta">В работе</span>
+  </div>
+  <div class="check-item">
+    <span class="label">⏳ Детальные страницы товаров — размеры, характеристики</span>
+    <span class="meta">В работе</span>
+  </div>
+  <div class="check-item">
+    <span class="label">⏳ Дедупликация по изображениям — один товар на WB и Ozon</span>
+    <span class="meta">План</span>
+  </div>
+  <div class="check-item">
+    <span class="label">⏳ Крон — регулярный сбор (раз/день)</span>
+    <span class="meta">План</span>
+  </div>
+  <div class="check-item">
+    <span class="label">❌ Yandex Market адаптер</span>
+    <span class="meta">План</span>
+  </div>
+</div>
+
+<!-- By source -->
+<h2>📊 По источникам</h2>
+<table>
+  <thead><tr><th>Источник</th><th>Товаров</th><th>Брендов</th><th>Средняя цена</th><th>Мин</th><th>Макс</th><th>Последний сбор</th></tr></thead>
+  <tbody>
+    
+      <tr>
+        <td><b>wildberries</b></td>
+        <td class="num">156</td>
+        <td class="num">152</td>
+        <td class="num">1,559 ₽</td>
+        <td class="num">138 ₽</td>
+        <td class="num">4,853 ₽</td>
+        <td>14.05.2026</td>
+      </tr>
+    
+  </tbody>
+</table>
+
+<!-- Brand table -->
+<h2>🏭 Бренды плитки (топ-25)</h2>
+<table>
+  <thead><tr><th>Бренд</th><th>Товаров</th><th>Средняя цена</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="name" title="Beryoza Ceramica / 30х60см Плитка керамическая для ванной и кухни под мрамор">Beryoza Ceramica</td>
+      <td class="num">2</td>
+      <td class="num">2,163 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="/ Плитка керамическая для ванной комнаты и кухни"></td>
+      <td class="num">2</td>
+      <td class="num">2,373 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="/ Керамогранит Green 20х20х0,8см зеленый 0,96м2 уп"></td>
+      <td class="num">1</td>
+      <td class="num">772 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="AMODECOR / Плитка напольная 30х30 см ПВХ самоклеящаяся 40 шт">AMODECOR</td>
+      <td class="num">1</td>
+      <td class="num">975 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="AMODECOR / Плитка напольная 30х30см ПВХ самоклеящаяся 40шт">AMODECOR</td>
+      <td class="num">1</td>
+      <td class="num">926 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="AMODECOR / Плитка напольная 30х30см ПВХ самоклеящаяся 60шт">AMODECOR</td>
+      <td class="num">1</td>
+      <td class="num">1,295 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="AMODECOR / Плитка половая 30х30 см самоклеящаяся матовая ПВХ 40 шт">AMODECOR</td>
+      <td class="num">1</td>
+      <td class="num">1,061 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="BELANI / 60х60см Плитка Керамогранит для ванной кухни и прихожей">BELANI</td>
+      <td class="num">1</td>
+      <td class="num">2,117 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="BELANI / Плитка керамогранит для улицы, крыльца и ванной">BELANI</td>
+      <td class="num">1</td>
+      <td class="num">2,704 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / 15х60см Плитка Керамогранит для ванной, кухни и прихожей">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,391 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / 30х60см Плитка керамическая настенная для ванной и кухни">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,092 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / 42х42см Керамическая Плитка напольная для ванной и кухни">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,704 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / 42х42см Плитка керамическая для ванной и кухни под мрамор">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,587 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / 42х42см Плитка керамическая напольная для ванной и кухни">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,587 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Aktau 600х600 мм">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,631 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Navia асфальтовый 600х600 мм">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,631 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Raby 600х600 мм">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,558 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Tokao 600х600 мм">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,558 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Ванкувер коричневый 147х594 мм для пола">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,627 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Вяз серый 147х594 мм для пола">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,692 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Денвер серый 147х594 мм для пола">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,692 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Дуб светло-коричневый 147х594 мм для пола">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,627 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Лондон серый 147х594 мм для пола">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,643 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Монреаль голубой 147х594 мм для пола">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,692 ₽</td>
+    </tr>
+  
+
+    <tr>
+      <td class="name" title="Beryoza Ceramica / Керамогранит Прима светло-бежевый 147х594 мм для пола">Beryoza Ceramica</td>
+      <td class="num">1</td>
+      <td class="num">2,643 ₽</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Latest tile products -->
+<h2>📋 Последние товары (плитка)</h2>
+<table>
+  <thead><tr><th>#</th><th>Товар</th><th>Бренд</th><th>Цена</th><th>Собран</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td class="name" title="Плитка керамогранит для балкона террасы и улицы 60х60см Beryoza Ceramica">Плитка керамогранит для балкона террасы и улицы 60х60см Bery</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,665 ₽</td>
+      <td>14.05 06:13</td>
+    </tr>
+  
+
+    <tr>
+      <td>2</td>
+      <td class="name" title="Плитка керамическая (керамогранит) Stonex Gris Rustic 60х120 TileKraft">Плитка керамическая (керамогранит) Stonex Gris Rustic 60х120</td>
+      <td>TileKraft</td>
+      <td class="num">1,553 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>3</td>
+      <td class="name" title="Керамическая плитка (керамогранит) Адамас 450х450 Gracia Ceramica">Керамическая плитка (керамогранит) Адамас 450х450 Gracia Cer</td>
+      <td>Gracia Ceramica</td>
+      <td class="num">1,811 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>4</td>
+      <td class="name" title="Керамогранит 22х90 см Wood Concept Prime светло-серый Cersanit">Керамогранит 22х90 см Wood Concept Prime светло-серый Cersan</td>
+      <td>Cersanit</td>
+      <td class="num">2,197 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>5</td>
+      <td class="name" title="Керамогранит 22х90 см Wood Concept Prime серый Cersanit">Керамогранит 22х90 см Wood Concept Prime серый Cersanit</td>
+      <td>Cersanit</td>
+      <td class="num">2,197 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>6</td>
+      <td class="name" title="Керамогранит Green 20х20х0,8см зеленый 0,96м2 уп ">Керамогранит Green 20х20х0,8см зеленый 0,96м2 уп </td>
+      <td></td>
+      <td class="num">772 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>7</td>
+      <td class="name" title="Керамогранит &quot;Венский лес&quot; Белый 20х60см (8шт 0,96м2) LB CERAMICS">Керамогранит "Венский лес" Белый 20х60см (8шт 0,96м2) LB CER</td>
+      <td>LB CERAMICS</td>
+      <td class="num">1,670 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>8</td>
+      <td class="name" title="Керамогранит &quot;Джордано&quot; Натуральный (8шт 0,96м2) LB CERAMICS">Керамогранит "Джордано" Натуральный (8шт 0,96м2) LB CERAMICS</td>
+      <td>LB CERAMICS</td>
+      <td class="num">1,968 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>9</td>
+      <td class="name" title="Керамогранит Raby 600х600 мм Beryoza Ceramica">Керамогранит Raby 600х600 мм Beryoza Ceramica</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,558 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>10</td>
+      <td class="name" title="Керамогранит &quot;Джордано&quot; Коричневый 20х60см (8шт 0,96м2) LB CERAMICS">Керамогранит "Джордано" Коричневый 20х60см (8шт 0,96м2) LB C</td>
+      <td>LB CERAMICS</td>
+      <td class="num">1,910 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>11</td>
+      <td class="name" title="Керамогранит Техас бежевый 147х594 мм для пола Beryoza Ceramica">Керамогранит Техас бежевый 147х594 мм для пола Beryoza Ceram</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,659 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>12</td>
+      <td class="name" title="Керамогранит Navia асфальтовый 600х600 мм Beryoza Ceramica">Керамогранит Navia асфальтовый 600х600 мм Beryoza Ceramica</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,631 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>13</td>
+      <td class="name" title="Керамогранит Тайга натуральный 147х594 мм для пола Beryoza Ceramica">Керамогранит Тайга натуральный 147х594 мм для пола Beryoza C</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,692 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>14</td>
+      <td class="name" title="Плитка керамогранит 293х293 мм, Колизей для улицы Beryoza Ceramica">Плитка керамогранит 293х293 мм, Колизей для улицы Beryoza Ce</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,648 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>15</td>
+      <td class="name" title="Керамогранит &quot;Венский лес&quot; Бежевый 20х60см ( 8шт 0,96м2) LB CERAMICS">Керамогранит "Венский лес" Бежевый 20х60см ( 8шт 0,96м2) LB </td>
+      <td>LB CERAMICS</td>
+      <td class="num">1,670 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>16</td>
+      <td class="name" title="Керамогранит Aktau 600х600 мм Beryoza Ceramica">Керамогранит Aktau 600х600 мм Beryoza Ceramica</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,631 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>17</td>
+      <td class="name" title="Плитка керамогранит для улицы, крыльца и ванной BELANI">Плитка керамогранит для улицы, крыльца и ванной BELANI</td>
+      <td>BELANI</td>
+      <td class="num">2,704 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>18</td>
+      <td class="name" title="Керамогранит Tokao 600х600 мм Beryoza Ceramica">Керамогранит Tokao 600х600 мм Beryoza Ceramica</td>
+      <td>Beryoza Ceramica</td>
+      <td class="num">2,558 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>19</td>
+      <td class="name" title="Керамогранит &quot;Цемент Стайл&quot; светло-сер 45*45 (8шт 1,62м2) LB CERAMICS">Керамогранит "Цемент Стайл" светло-сер 45*45 (8шт 1,62м2) LB</td>
+      <td>LB CERAMICS</td>
+      <td class="num">2,706 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  
+
+    <tr>
+      <td>20</td>
+      <td class="name" title="Плитка керамическая (керамогранит) Этна, беж 330х108 Unitile">Плитка керамическая (керамогранит) Этна, беж 330х108 Unitile</td>
+      <td>Unitile</td>
+      <td class="num">1,748 ₽</td>
+      <td>14.05 06:12</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="footer">
+  Данные из Supabase (156 всего записей, 95 отфильтровано по плитке) ·
+  <a href="/" style="color:var(--blue)">Дашборд</a> ·
+  <a href="/prognosis" style="color:var(--blue)">Прогноз</a> ·
+  <a href="/news.html" style="color:var(--blue)">Новости</a>
+</div>
+
+</div>
+</body>
+</html>

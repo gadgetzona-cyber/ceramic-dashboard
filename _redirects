@@ -1,0 +1,4 @@
+/prognosis  /prognosis.html  200
+/news  /news.html  200
+/scraping  /scraping.html  200
+/api/*  /api/:splat  200
