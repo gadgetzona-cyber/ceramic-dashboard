@@ -27,30 +27,30 @@ jobs:
       - name: Regenerate dashboard
         run: node parsers/regenerate-dashboard.js
         env:
-          PGHOST: ${{ secrets.SUPABASE_HOST }}
-          PGPORT: '5432'
+          PGHOST: 'aws-0-eu-west-1.pooler.supabase.com'
+          PGPORT: '6543'
           PGDATABASE: 'postgres'
-          PGUSER: 'postgres'
+          PGUSER: 'postgres.lxocykynmkhfxdekmcek'
           PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
           PGSSLMODE: 'require'
 
       - name: Regenerate prognosis
         run: node parsers/generate-prognosis.js
         env:
-          PGHOST: ${{ secrets.SUPABASE_HOST }}
-          PGPORT: '5432'
+          PGHOST: 'aws-0-eu-west-1.pooler.supabase.com'
+          PGPORT: '6543'
           PGDATABASE: 'postgres'
-          PGUSER: 'postgres'
+          PGUSER: 'postgres.lxocykynmkhfxdekmcek'
           PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
           PGSSLMODE: 'require'
 
       - name: Regenerate news
         run: node parsers/generate-news-page.js
         env:
-          PGHOST: ${{ secrets.SUPABASE_HOST }}
-          PGPORT: '5432'
+          PGHOST: 'aws-0-eu-west-1.pooler.supabase.com'
+          PGPORT: '6543'
           PGDATABASE: 'postgres'
-          PGUSER: 'postgres'
+          PGUSER: 'postgres.lxocykynmkhfxdekmcek'
           PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
           PGSSLMODE: 'require'
 
