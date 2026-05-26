@@ -1,15 +1,9 @@
 name: Regenerate Dashboard
 
 on:
-  schedule:
-    - cron: '0 */6 * * *'
   workflow_dispatch:
   push:
     branches: [ main ]
-
-env:
-  NODE_OPTIONS: "--dns-result-order=ipv4first"
-  SUPABASE: '1'
 
 jobs:
   build:
@@ -24,13 +18,13 @@ jobs:
       - name: Install dependencies
         run: npm install pg
 
-      - name: Regenerate dashboard
+      - name: Regenerate dashboard (using IPv4 pooler)
         run: node parsers/regenerate-dashboard.js
         env:
           PGHOST: 'aws-0-eu-west-1.pooler.supabase.com'
           PGPORT: '6543'
           PGDATABASE: 'postgres'
-          PGUSER: 'postgres.lxocykynmkhfxdekmcek'
+          PGUSER: 'postgres'
           PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
           PGSSLMODE: 'require'
 
@@ -40,7 +34,7 @@ jobs:
           PGHOST: 'aws-0-eu-west-1.pooler.supabase.com'
           PGPORT: '6543'
           PGDATABASE: 'postgres'
-          PGUSER: 'postgres.lxocykynmkhfxdekmcek'
+          PGUSER: 'postgres'
           PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
           PGSSLMODE: 'require'
 
@@ -50,7 +44,7 @@ jobs:
           PGHOST: 'aws-0-eu-west-1.pooler.supabase.com'
           PGPORT: '6543'
           PGDATABASE: 'postgres'
-          PGUSER: 'postgres.lxocykynmkhfxdekmcek'
+          PGUSER: 'postgres'
           PGPASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
           PGSSLMODE: 'require'
 
