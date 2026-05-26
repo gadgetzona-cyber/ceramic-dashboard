@@ -8,6 +8,7 @@ on:
     branches: [ main ]
 
 env:
+  NODE_OPTIONS: "--dns-result-order=ipv4first"
   SUPABASE: '1'
 
 jobs:
