@@ -7,8 +7,11 @@
 <style>
 :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #e6edf3; --muted: #8b949e; --blue: #58a6ff; --green: #3fb950; --red: #f85149; --orange: #d29922; }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: var(--bg); color: var(--text); padding: 1rem; font-size: 14px; }
-.container { max-width: 1100px; margin: auto; }
+body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: var(--bg); color: var(--text); padding: 0; font-size: 14px; }
+.header{background:#161b22;border-bottom:1px solid #30363d;padding:.75rem 1rem}
+.header h1{font-size:1.1rem;margin:0;color:#e6edf3}
+.header h1 small{font-size:.75rem;color:#8b949e;font-weight:400}
+.container { max-width: 1100px; margin: auto; padding:1rem; }
 h1 { font-size: 1.3rem; margin-bottom: .25rem; }
 h1 small { color: var(--muted); font-weight: normal; font-size: .85rem; }
 h2 { font-size: 1.1rem; margin: 1.5rem 0 .75rem; color: var(--blue); }
@@ -64,6 +67,7 @@ tr:hover td { background: rgba(88,166,255,.04); }
 </style>
 </head>
 <body>
+<div class="header"><h1>🕷️ Состояние парсинга <small>14.05.2026, 09:33:26</small></h1></div>
 <div class="nav">
 <a href="./" class="nav-btn">📊 Все</a>
 <a href="./?cat=macro" class="nav-btn">📈 Макроэкономика</a>
@@ -77,7 +81,6 @@ tr:hover td { background: rgba(88,166,255,.04); }
 
 <div class="container">
 
-<h1>🕷️ Состояние парсинга <small>14.05.2026, 09:33:26</small></h1>
 <p class="sub">Сбор данных с маркетплейсов для аналитики рынка керамической плитки</p>
 
 <!-- KPI -->
