@@ -56,9 +56,25 @@ tr:hover td { background: rgba(88,166,255,.04); }
   .status-grid { grid-template-columns: 1fr; }
   td.name { max-width: 160px; }
 }
+
+.nav{display:flex;gap:0;padding:0;flex-wrap:wrap;border-bottom:1px solid #30363d;background:#161b22;padding-left:.5rem}
+.nav-btn{background:transparent;border:none;border-bottom:2px solid transparent;padding:.55rem .85rem;font-size:.75rem;cursor:pointer;color:#8b949e;font-weight:500;text-decoration:none;white-space:nowrap}
+.nav-btn:hover{color:#f0f6fc;background:#21262d}
+.nav-btn.active{color:#f0f6fc;border-bottom-color:#58a6ff;background:transparent}
 </style>
 </head>
 <body>
+<div class="nav">
+<a href="./" class="nav-btn">📊 Все</a>
+<a href="./?cat=macro" class="nav-btn">📈 Макроэкономика</a>
+<a href="./?cat=competitors" class="nav-btn">🏭 Конкуренты</a>
+<a href="./?cat=import" class="nav-btn">📦 Импорт</a>
+<a href="./?cat=prices" class="nav-btn">💵 Цены</a>
+<a href="./prognosis" class="nav-btn">🔮 Прогноз</a>
+<span class="nav-btn active">🕷️ Парсинг</span>
+<a href="./news.html" class="nav-btn">📰 Новости</a>
+</div>
+
 <div class="container">
 
 <h1>🕷️ Состояние парсинга <small>14.05.2026, 09:33:26</small></h1>
@@ -522,8 +538,8 @@ tr:hover td { background: rgba(88,166,255,.04); }
 
 <div class="footer">
   Данные из Supabase (156 всего записей, 95 отфильтровано по плитке) ·
-  <a href="/" style="color:var(--blue)">Дашборд</a> ·
-  <a href="/prognosis" style="color:var(--blue)">Прогноз</a> ·
+  <a href="./" style="color:var(--blue)">Дашборд</a> ·
+  <a href="./prognosis" style="color:var(--blue)">Прогноз</a> ·
   <a href="/news.html" style="color:var(--blue)">Новости</a>
 </div>
 
