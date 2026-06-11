@@ -6,29 +6,48 @@
 <title>📰 Новости рынка керамической плитки</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#222;padding:1rem}
-h1{font-size:1.2rem;margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-h1 a{font-size:.8rem;font-weight:400;color:#1565c0;text-decoration:underline;margin-left:auto}
-h2{font-size:1rem;margin:.8rem 0 .4rem;padding-bottom:.2rem;border-bottom:2px solid #1565c0;display:flex;align-items:center;gap:.4rem}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0d1117;color:#e6edf3;font-size:14px}
+.header{background:#161b22;border-bottom:1px solid #30363d;padding:.75rem 1rem}
+.header h1{font-size:1.1rem;color:#f0f6fc;margin:0;word-break:break-word}
+.nav{display:flex;gap:0;padding:0;flex-wrap:wrap;border-bottom:1px solid #30363d;background:#161b22;padding-left:.5rem}
+.nav-btn{background:transparent;border:none;border-bottom:2px solid transparent;padding:.55rem .85rem;font-size:.75rem;cursor:pointer;color:#8b949e;font-weight:500;transition:.15s;white-space:nowrap;text-decoration:none}
+.nav-btn:hover{color:#f0f6fc;background:#21262d}
+.nav-btn.active{color:#f0f6fc;border-bottom-color:#58a6ff;background:transparent}
+.container{max-width:1200px;margin:0 auto;padding:.75rem}
+h2{font-size:1.1rem;margin:1.2rem 0 .5rem;color:#58a6ff;border-left:3px solid #58a6ff;padding-left:.5rem}
 .sec-1{border-left:3px solid #c62828;padding-left:.5rem;margin-top:.6rem}
-.sec-2{border-left:3px solid #1565c0;padding-left:.5rem;margin-top:1.2rem}
-.nc{display:flex;gap:.75rem;padding:.6rem .75rem;background:#fff;border-radius:8px;margin-bottom:.4rem;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.nc:hover{box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.sec-2{border-left:3px solid #58a6ff;padding-left:.5rem;margin-top:1.2rem}
+.nc{display:flex;gap:.75rem;padding:.6rem .75rem;background:#161b22;border:1px solid #30363d;border-radius:8px;margin-bottom:.4rem;align-items:flex-start}
+.nc:hover{border-color:#58a6ff}
 .ni{width:72px;height:56px;object-fit:cover;border-radius:4px;flex-shrink:0}
 .nd{flex:1;min-width:0}
-.nt{color:#1565c0;text-decoration:none;font-size:.85rem;line-height:1.3;display:block;font-weight:500}
+.nt{color:#58a6ff;text-decoration:none;font-size:.85rem;line-height:1.3;display:block;font-weight:500}
 .nt:hover{text-decoration:underline}
 .nm{display:flex;gap:.35rem;margin-top:.2rem;flex-wrap:wrap}
 .ns{color:#fff;font-size:.65rem;padding:1px 5px;border-radius:3px;font-weight:600}
-.nx{color:#777;font-size:.7rem}
-.ft{text-align:center;font-size:.7rem;color:#999;margin-top:1.5rem;padding:1rem}
-@media(max-width:600px){.ni{width:56px;height:44px}}
+.nx{color:#8b949e;font-size:.7rem}
+.ft{text-align:center;font-size:.7rem;color:#484f58;margin-top:1.5rem;padding:1rem}
+.ft a{color:#58a6ff}
+@media(max-width:600px){.header h1{font-size:.9rem}.nav-btn{font-size:.6rem;padding:.35rem .4rem}.ni{width:56px;height:44px}.container{padding:.3rem}}
 </style>
 </head>
 <body>
 
-<h1>📰 Новости рынка <a href="/">← На дашборд</a></h1>
-<div style="font-size:.7rem;color:#888;margin-bottom:.6rem">Отфильтровано: 300 релевантных новостей. Без нефти, лекарств, огурцов и прочего шума.</div>
+<div class="header"><h1>📰 Новости рынка керамической плитки</h1></div>
+<div class="nav">
+<a href="./" class="nav-btn">📊 Все</a>
+<a href="./?cat=macro" class="nav-btn">📈 Макроэкономика</a>
+<a href="./?cat=competitors" class="nav-btn">🏭 Конкуренты</a>
+<a href="./?cat=import" class="nav-btn">📦 Импорт</a>
+<a href="./?cat=prices" class="nav-btn">💵 Цены</a>
+<a href="./prognosis" class="nav-btn">🔮 Прогноз</a>
+<a href="./scraping" class="nav-btn">🕷️ Парсинг</a>
+<span class="nav-btn active">📰 Новости</span>
+</div>
+
+<div class="container">
+
+<div style="font-size:.7rem;color:#8b949e;margin-bottom:.6rem">Отфильтровано: 300 релевантных новостей. Без нефти, лекарств, огурцов и прочего шума.</div>
 
 <div class="sec-1">
 <h2>🧱 Рынок керамической плитки</h2>
@@ -337,6 +356,8 @@ h2{font-size:1rem;margin:.8rem 0 .4rem;padding-bottom:.2rem;border-bottom:2px so
 <div class="nc"><div class="nd"><a href="https://lenta.ru/news/2026/06/03/v-minfine-vyskazalis-o-srokah-vvedeniya-aktsiza-na-importnuyu-stal/" target="_blank" class="nt">В Минфине высказались о сроках введения акциза на импортную сталь</a><div class="nm"><span class="ns" style="background:#e65100">MEDIUM</span><span class="ns" style="background:#2e7d32;font-size:.6rem">300%</span><span class="ns" style="background:#555;font-size:.6rem">Импорт / Логистика</span><span class="nx">Лента.ру</span><span class="nx">3 июня 2026 г. в 15:10</span></div><div class="nx" style="margin-top:.15rem;font-size:.72rem;color:#555;line-height:1.3"></div></div></div>
 <div class="nc"><div class="nd"><a href="https://ria.ru/20260603/rets-2096477381.html" target="_blank" class="nt">МСП составляют большинство пользователей платформы "Мой экспорт"</a><div class="nm"><span class="ns" style="background:#e65100">MEDIUM</span><span class="ns" style="background:#2e7d32;font-size:.6rem">300%</span><span class="ns" style="background:#555;font-size:.6rem">Импорт / Логистика</span><span class="nx">РИА Новости</span><span class="nx">3 июня 2026 г. в 14:37</span></div><div class="nx" style="margin-top:.15rem;font-size:.72rem;color:#555;line-height:1.3"></div></div></div>
 <div class="nc"><div class="nd"><a href="https://www.interfax.ru/business/1093556" target="_blank" class="nt">Сбербанк выделит не менее 192 млрд руб. на строительство города-спутника Петербурга</a><div class="nm"><span class="ns" style="background:#e65100">MEDIUM</span><span class="ns" style="background:#2e7d32;font-size:.6rem">400%</span><span class="ns" style="background:#555;font-size:.6rem">Экономика</span><span class="nx">Интерфакс</span><span class="nx">3 июня 2026 г. в 14:35</span></div><div class="nx" style="margin-top:.15rem;font-size:.72rem;color:#555;line-height:1.3">Сбербанк предоставит проектное финансирование одной из структур ГК "Старт-Девелопмент" в размере не менее 192 млрд рублей на строительство первой и второй очередей города-спутника Южный на территории Пушкинского района Петербурга.</div></div></div>
+</div>
+
 </div>
 
 <div class="ft">Источники: Интерфакс, Прайм, РИА Новости, РИА Недвижимость, Лента.ру, АПКМ (apkm.pro), Telegram-каналы · Обновление: раз в неделю</div>
